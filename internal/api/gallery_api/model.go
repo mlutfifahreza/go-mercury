@@ -7,9 +7,9 @@ import (
 )
 
 type APIResponse struct {
-	Success bool  `json:"success,omitempty"`
-	Data    any   `json:"data,omitempty"`
-	Error   error `json:"error,omitempty"`
+	Success bool   `json:"success"`
+	Data    any    `json:"data,omitempty"`
+	Error   string `json:"error,omitempty"`
 }
 
 func createSuccessResponse(c *gin.Context, data any) {
@@ -22,6 +22,6 @@ func createSuccessResponse(c *gin.Context, data any) {
 func createFailResponse(c *gin.Context, httpStatus int, err error) {
 	c.JSON(httpStatus, APIResponse{
 		Success: false,
-		Error:   err,
+		Error:   err.Error(),
 	})
 }

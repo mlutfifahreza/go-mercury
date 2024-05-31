@@ -7,10 +7,8 @@ import (
 
 	_ "github.com/lib/pq"
 	log "github.com/sirupsen/logrus"
-)
 
-var (
-	ProductNotFoundError = errors.New("product-not-found")
+	"go-mercury/pkg/constant"
 )
 
 type DB struct {
@@ -78,7 +76,7 @@ func (d *DB) GetProductByID(id int64) (Product, error) {
 	err = db.QueryRow(sqlStatement, id).Scan(&product.ID, &product.Title, &product.ImageURL, &product.Description)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
-			return product, ProductNotFoundError
+			return product, constant.ProductNotFoundError
 		}
 		return product, err
 	}
