@@ -7,5 +7,5 @@ tidy:
 test:
 	go test -cover ./...
 
-all:
+pre-commit:
 	make build tidy test
