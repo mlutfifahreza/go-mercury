@@ -35,13 +35,9 @@ func NewDB(
 }
 
 func (d *DB) getConnection() (*sql.DB, error) {
-	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s "+
-		"password=%s dbname=%s sslmode=disable",
+	psqlInfo := fmt.Sprintf(
+		"host=%s port=%d user=%s password=%s dbname=%s sslmode=disable",
 		d.host, d.port, d.username, d.password, d.dbname)
-
-	log.Info("test_reza|",
-		"psqlInfo|",
-		psqlInfo)
 
 	db, err := sql.Open("postgres", psqlInfo)
 	if err != nil {
