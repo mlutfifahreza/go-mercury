@@ -25,7 +25,7 @@ func (api *API) Run() error {
 }
 
 func (api *API) SetupDependencies() error {
-	galleryDB := gallery_db.DB{}
+	galleryDB := gallery_db.NewDB("127.0.0.1", 5432, "username", "password", "gallery_db")
 	galleryService := gallery_service.NewService(galleryDB)
 	api.galleryHandler = NewGalleryHandler(&galleryService)
 
