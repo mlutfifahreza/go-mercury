@@ -26,7 +26,6 @@ func NewLinkHandler(galleryService *gallery_service.Service) *LinkHandler {
 }
 
 func (h *LinkHandler) GetLink(c *gin.Context) {
-
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
 		general.CreateFailResponse(c, http.StatusBadRequest, constant.ErrorInvalidParam)
