@@ -36,6 +36,7 @@ func (api *API) SetupRouter() {
 	api.engine.GET("/ping", Ping)
 	api.engine.GET("/healthcheck", HealthCheck)
 
-	api.engine.GET("/products/:id", api.galleryHandler.getPoll)
-	api.engine.POST("/products/", api.galleryHandler.createPoll)
+	api.engine.GET("/products/:id", api.galleryHandler.getProduct)
+	api.engine.POST("/products", api.galleryHandler.createProduct)
+	api.engine.PATCH("/products", api.galleryHandler.updateProduct)
 }

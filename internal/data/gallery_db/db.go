@@ -69,7 +69,7 @@ func (d *DB) GetProductByID(id int64) (Product, error) {
 
 	sqlStatement := `SELECT id, title, image_url, description FROM products WHERE id = $1`
 	var product Product
-	err = db.QueryRow(sqlStatement, id).Scan(&product.ID, &product.Title, &product.ImageUrl, &product.Description)
+	err = db.QueryRow(sqlStatement, id).Scan(&product.Id, &product.Title, &product.ImageUrl, &product.Description)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return product, constant.ProductNotFoundError
@@ -94,7 +94,7 @@ func (d *DB) GetProducts() ([]Product, error) {
 
 	for rows.Next() {
 		var product Product
-		err := rows.Scan(&product.ID, &product.Title, &product.ImageUrl, &product.Description)
+		err := rows.Scan(&product.Id, &product.Title, &product.ImageUrl, &product.Description)
 		if err != nil {
 			return nil, err
 		}
@@ -117,7 +117,7 @@ func (d *DB) UpdateProduct(product Product) (int, error) {
 		UPDATE products
 		SET title = $2, image_url = $3, description = $4
 		WHERE id = $1`
-	res, err := db.Exec(sqlStatement, product.ID, product.Title, product.ImageUrl, product.Description)
+	res, err := db.Exec(sqlStatement, product.Id, product.Title, product.ImageUrl, product.Description)
 	if err != nil {
 		return 0, err
 	}
@@ -125,6 +125,10 @@ func (d *DB) UpdateProduct(product Product) (int, error) {
 	count, err := res.RowsAffected()
 	if err != nil {
 		return 0, err
+	}
+
+	if count == 0 {
+		return 0, constant.ProductNotFoundError
 	}
 
 	return int(count), nil

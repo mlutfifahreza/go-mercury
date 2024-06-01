@@ -23,7 +23,7 @@ func NewGalleryHandler(galleryService *gallery_service.Service) *GalleryHandler 
 	}
 }
 
-func (h *GalleryHandler) getPoll(c *gin.Context) {
+func (h *GalleryHandler) getProduct(c *gin.Context) {
 
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
@@ -38,7 +38,7 @@ func (h *GalleryHandler) getPoll(c *gin.Context) {
 			return
 		}
 
-		log.Errorf("h.galleryService.GetProduct(id), err=%v", err)
+		log.WithError(err).Error("galleryService.GetProduct")
 		createFailResponse(c, http.StatusInternalServerError, err)
 		return
 	}
@@ -46,8 +46,8 @@ func (h *GalleryHandler) getPoll(c *gin.Context) {
 	createSuccessResponse(c, product)
 }
 
-func (h *GalleryHandler) createPoll(c *gin.Context) {
-	reqBody, err := parseRequestBody[CreatePollRequest](c)
+func (h *GalleryHandler) createProduct(c *gin.Context) {
+	reqBody, err := parseRequestBody[CreateProductRequest](c)
 	if err != nil {
 		createFailResponse(c, http.StatusBadRequest, err)
 		return
@@ -61,10 +61,39 @@ func (h *GalleryHandler) createPoll(c *gin.Context) {
 
 	id, err := h.galleryService.CreateProduct(newProduct)
 	if err != nil {
-		log.Errorf("h.galleryService.GetProduct(id), err=%v", err)
+		log.WithError(err).Error("galleryService.CreateProduct")
 		createFailResponse(c, http.StatusInternalServerError, err)
 		return
 	}
 
-	createSuccessResponse(c, CreatePollResponse{Id: id})
+	createSuccessResponse(c, CreateProductResponse{Id: id})
+}
+
+func (h *GalleryHandler) updateProduct(c *gin.Context) {
+	reqBody, err := parseRequestBody[UpdateProductRequest](c)
+	if err != nil {
+		createFailResponse(c, http.StatusBadRequest, err)
+		return
+	}
+
+	product := gallery_db.Product{
+		Id:          int64(reqBody.Id),
+		Title:       reqBody.Title,
+		ImageUrl:    reqBody.ImageUrl,
+		Description: reqBody.Description,
+	}
+
+	_, err = h.galleryService.UpdateProduct(product)
+	if err != nil {
+		if errors.Is(err, constant.ProductNotFoundError) {
+			createFailResponse(c, http.StatusNotFound, err)
+			return
+		}
+
+		log.WithError(err).Error("galleryService.UpdateProduct")
+		createFailResponse(c, http.StatusInternalServerError, err)
+		return
+	}
+
+	createSuccessResponse(c, nil)
 }

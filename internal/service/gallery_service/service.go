@@ -25,3 +25,11 @@ func (s Service) CreateProduct(product gallery_db.Product) (int, error) {
 	}
 	return id, nil
 }
+
+func (s Service) UpdateProduct(product gallery_db.Product) (int, error) {
+	affectedCount, err := s.db.UpdateProduct(product)
+	if err != nil {
+		return 0, err
+	}
+	return affectedCount, nil
+}
