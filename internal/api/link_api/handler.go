@@ -84,7 +84,7 @@ func (h *LinkHandler) CreateLink(c *gin.Context) {
 
 	id, err := h.galleryService.CreateLink(newLink)
 	if err != nil {
-		if errors.Is(err, constant.StoreNotFoundError) || errors.Is(err, constant.StoreNotFoundError) {
+		if errors.Is(err, constant.ProductNotFoundError) || errors.Is(err, constant.StoreNotFoundError) {
 			general.CreateFailResponse(c, http.StatusNotFound, err)
 			return
 		}
