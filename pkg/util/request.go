@@ -2,14 +2,14 @@ package util
 
 import (
 	"encoding/json"
-	"io/ioutil"
+	"io"
 
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
 )
 
 func ParseRequestBody[T any](c *gin.Context) (*T, error) {
-	body, err := ioutil.ReadAll(c.Request.Body)
+	body, err := io.ReadAll(c.Request.Body)
 	if err != nil {
 		return nil, err
 	}
