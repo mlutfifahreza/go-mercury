@@ -17,3 +17,11 @@ func (s Service) GetProduct(id int) (*gallery_db.Product, error) {
 	}
 	return &product, nil
 }
+
+func (s Service) CreateProduct(product gallery_db.Product) (int, error) {
+	id, err := s.db.CreateProduct(product)
+	if err != nil {
+		return 0, err
+	}
+	return id, nil
+}

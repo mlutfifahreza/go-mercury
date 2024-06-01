@@ -25,3 +25,13 @@ func createFailResponse(c *gin.Context, httpStatus int, err error) {
 		Error:   err.Error(),
 	})
 }
+
+type CreatePollRequest struct {
+	Title       string `json:"title" validate:"required,min=3,max=256"`
+	ImageUrl    string `json:"image_url" validate:"required,url"`
+	Description string `json:"description" validate:"required,min=8,max=512"`
+}
+
+type CreatePollResponse struct {
+	Id int `json:"id"`
+}

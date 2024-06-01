@@ -8,6 +8,7 @@ import (
 	"github.com/gin-gonic/gin"
 	log "github.com/sirupsen/logrus"
 
+	"go-mercury/internal/data/gallery_db"
 	"go-mercury/internal/service/gallery_service"
 	"go-mercury/pkg/constant"
 )
@@ -17,7 +18,9 @@ type GalleryHandler struct {
 }
 
 func NewGalleryHandler(galleryService *gallery_service.Service) *GalleryHandler {
-	return &GalleryHandler{galleryService: galleryService}
+	return &GalleryHandler{
+		galleryService: galleryService,
+	}
 }
 
 func (h *GalleryHandler) getPoll(c *gin.Context) {
@@ -41,4 +44,27 @@ func (h *GalleryHandler) getPoll(c *gin.Context) {
 	}
 
 	createSuccessResponse(c, product)
+}
+
+func (h *GalleryHandler) createPoll(c *gin.Context) {
+	reqBody, err := parseRequestBody[CreatePollRequest](c)
+	if err != nil {
+		createFailResponse(c, http.StatusBadRequest, err)
+		return
+	}
+
+	newProduct := gallery_db.Product{
+		Title:       reqBody.Title,
+		ImageUrl:    reqBody.ImageUrl,
+		Description: reqBody.Description,
+	}
+
+	id, err := h.galleryService.CreateProduct(newProduct)
+	if err != nil {
+		log.Errorf("h.galleryService.GetProduct(id), err=%v", err)
+		createFailResponse(c, http.StatusInternalServerError, err)
+		return
+	}
+
+	createSuccessResponse(c, CreatePollResponse{Id: id})
 }

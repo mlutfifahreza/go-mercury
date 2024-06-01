@@ -37,4 +37,5 @@ func (api *API) SetupRouter() {
 	api.engine.GET("/healthcheck", HealthCheck)
 
 	api.engine.GET("/products/:id", api.galleryHandler.getPoll)
+	api.engine.POST("/products/", api.galleryHandler.createPoll)
 }
