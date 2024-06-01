@@ -22,6 +22,14 @@ func (s Service) GetProduct(id int) (*gallery_db.Product, error) {
 	return product, nil
 }
 
+func (s Service) GetProductDetail(id int) (*gallery_db.ProductDetail, error) {
+	productDetail, err := s.db.GetProductDetail(int64(id))
+	if err != nil {
+		return nil, err
+	}
+	return productDetail, nil
+}
+
 func (s Service) DeleteProduct(id int) (int, error) {
 	affectedCount, err := s.db.DeleteProduct(int64(id))
 	if err != nil {

@@ -46,6 +46,59 @@ func (d *DB) GetProductByID(id int64) (*Product, error) {
 	return &product, nil
 }
 
+func (d *DB) GetProductDetail(id int64) (*ProductDetail, error) {
+	db, err := d.getConnection()
+	if err != nil {
+		return nil, err
+	}
+	defer db.Close()
+
+	// Query for the product
+	productDetail := &ProductDetail{}
+	productQuery := `SELECT id, title, image_url, description FROM products WHERE id = $1`
+	err = db.QueryRow(productQuery, id).Scan(
+		&productDetail.ID,
+		&productDetail.Title,
+		&productDetail.ImageURL,
+		&productDetail.Description)
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return nil, constant.ProductNotFoundError
+		}
+		return nil, err
+	}
+
+	// Query for the associated links
+	linkDetailsQuery := `SELECT links.id, links.link, stores.name, stores.icon
+       FROM links 
+       JOIN stores ON links.store_id = stores.id
+       WHERE product_id = $1`
+	rows, err := db.Query(linkDetailsQuery, id)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var linkDetail LinkDetail
+		if err := rows.Scan(
+			&linkDetail.ID,
+			&linkDetail.Link,
+			&linkDetail.StoreName,
+			&linkDetail.StoreIcon,
+		); err != nil {
+			return nil, err
+		}
+		productDetail.LinkDetails = append(productDetail.LinkDetails, linkDetail)
+	}
+
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+
+	return productDetail, nil
+}
+
 func (d *DB) GetProducts() ([]Product, error) {
 	var products []Product
 

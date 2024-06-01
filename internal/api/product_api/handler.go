@@ -26,7 +26,6 @@ func NewProductHandler(galleryService *gallery_service.Service) *ProductHandler 
 }
 
 func (h *ProductHandler) GetProduct(c *gin.Context) {
-
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
 		general.CreateFailResponse(c, http.StatusBadRequest, constant.ErrorInvalidParam)
@@ -46,6 +45,28 @@ func (h *ProductHandler) GetProduct(c *gin.Context) {
 	}
 
 	general.CreateSuccessResponse(c, product)
+}
+
+func (h *ProductHandler) GetProductDetail(c *gin.Context) {
+	id, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		general.CreateFailResponse(c, http.StatusBadRequest, constant.ErrorInvalidParam)
+		return
+	}
+
+	productDetail, err := h.galleryService.GetProductDetail(id)
+	if err != nil {
+		if errors.Is(err, constant.ProductNotFoundError) {
+			general.CreateFailResponse(c, http.StatusNotFound, err)
+			return
+		}
+
+		log.WithError(err).Error("galleryService.GetProduct")
+		general.CreateFailResponse(c, http.StatusInternalServerError, err)
+		return
+	}
+
+	general.CreateSuccessResponse(c, productDetail)
 }
 
 func (h *ProductHandler) DeleteProduct(c *gin.Context) {
