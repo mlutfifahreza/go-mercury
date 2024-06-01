@@ -48,7 +48,7 @@ func (d *DB) getConnection() (*sql.DB, error) {
 func (d *DB) CreateProduct(product Product) (int, error) {
 	db, err := d.getConnection()
 	if err != nil {
-		return 0, nil
+		return 0, err
 	}
 	defer db.Close()
 
@@ -68,7 +68,7 @@ func (d *DB) CreateProduct(product Product) (int, error) {
 func (d *DB) GetProductByID(id int64) (*Product, error) {
 	db, err := d.getConnection()
 	if err != nil {
-		return nil, nil
+		return nil, err
 	}
 	defer db.Close()
 
@@ -89,7 +89,7 @@ func (d *DB) GetProducts() ([]Product, error) {
 
 	db, err := d.getConnection()
 	if err != nil {
-		return nil, nil
+		return nil, err
 	}
 	defer db.Close()
 
@@ -120,7 +120,7 @@ func (d *DB) GetProducts() ([]Product, error) {
 func (d *DB) UpdateProduct(product Product) (int, error) {
 	db, err := d.getConnection()
 	if err != nil {
-		return 0, nil
+		return 0, err
 	}
 	defer db.Close()
 
@@ -148,7 +148,7 @@ func (d *DB) UpdateProduct(product Product) (int, error) {
 func (d *DB) DeleteProduct(id int64) (int, error) {
 	db, err := d.getConnection()
 	if err != nil {
-		return 0, nil
+		return 0, err
 	}
 	defer db.Close()
 
