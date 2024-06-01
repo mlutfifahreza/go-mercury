@@ -11,6 +11,7 @@ import (
 	"go-mercury/internal/data/gallery_db"
 	"go-mercury/internal/service/gallery_service"
 	"go-mercury/pkg/constant"
+	"go-mercury/pkg/util"
 )
 
 type GalleryHandler struct {
@@ -46,8 +47,30 @@ func (h *GalleryHandler) getProduct(c *gin.Context) {
 	createSuccessResponse(c, product)
 }
 
+func (h *GalleryHandler) deleteProduct(c *gin.Context) {
+	id, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		createFailResponse(c, http.StatusBadRequest, ErrorInvalidParam)
+		return
+	}
+
+	_, err = h.galleryService.DeleteProduct(id)
+	if err != nil {
+		if errors.Is(err, constant.ProductNotFoundError) {
+			createFailResponse(c, http.StatusNotFound, err)
+			return
+		}
+
+		log.WithError(err).Error("galleryService.DeleteProduct")
+		createFailResponse(c, http.StatusInternalServerError, err)
+		return
+	}
+
+	createSuccessResponse(c, nil)
+}
+
 func (h *GalleryHandler) createProduct(c *gin.Context) {
-	reqBody, err := parseRequestBody[CreateProductRequest](c)
+	reqBody, err := util.ParseRequestBody[CreateProductRequest](c)
 	if err != nil {
 		createFailResponse(c, http.StatusBadRequest, err)
 		return
@@ -70,7 +93,7 @@ func (h *GalleryHandler) createProduct(c *gin.Context) {
 }
 
 func (h *GalleryHandler) updateProduct(c *gin.Context) {
-	reqBody, err := parseRequestBody[UpdateProductRequest](c)
+	reqBody, err := util.ParseRequestBody[UpdateProductRequest](c)
 	if err != nil {
 		createFailResponse(c, http.StatusBadRequest, err)
 		return

@@ -13,6 +13,6 @@ func main() {
 	err := api.Run()
 
 	if err != nil {
-		log.Errorf("error api run: %v", err)
+		log.WithError(err).Error("api.Run")
 	}
 }

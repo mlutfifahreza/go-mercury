@@ -1,4 +1,4 @@
-package gallery_api
+package util
 
 import (
 	"encoding/json"
@@ -8,7 +8,7 @@ import (
 	"github.com/go-playground/validator/v10"
 )
 
-func parseRequestBody[T any](c *gin.Context) (*T, error) {
+func ParseRequestBody[T any](c *gin.Context) (*T, error) {
 	body, err := ioutil.ReadAll(c.Request.Body)
 	if err != nil {
 		return nil, err
@@ -16,18 +16,18 @@ func parseRequestBody[T any](c *gin.Context) (*T, error) {
 
 	bodyString := string(body)
 
-	var requestBpdy T
-	err = json.Unmarshal([]byte(bodyString), &requestBpdy)
+	var requestBody T
+	err = json.Unmarshal([]byte(bodyString), &requestBody)
 	if err != nil {
 		return nil, err
 	}
 
 	validate := validator.New()
 
-	err = validate.Struct(requestBpdy)
+	err = validate.Struct(requestBody)
 	if err != nil {
 		return nil, err
 	}
 
-	return &requestBpdy, nil
+	return &requestBody, nil
 }

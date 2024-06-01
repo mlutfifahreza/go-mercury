@@ -15,7 +15,15 @@ func (s Service) GetProduct(id int) (*gallery_db.Product, error) {
 	if err != nil {
 		return nil, err
 	}
-	return &product, nil
+	return product, nil
+}
+
+func (s Service) DeleteProduct(id int) (int, error) {
+	affectedCount, err := s.db.DeleteProduct(int64(id))
+	if err != nil {
+		return 0, err
+	}
+	return affectedCount, nil
 }
 
 func (s Service) CreateProduct(product gallery_db.Product) (int, error) {

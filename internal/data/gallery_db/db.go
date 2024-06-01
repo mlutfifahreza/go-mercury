@@ -6,7 +6,6 @@ import (
 	"fmt"
 
 	_ "github.com/lib/pq"
-	log "github.com/sirupsen/logrus"
 
 	"go-mercury/pkg/constant"
 )
@@ -41,13 +40,16 @@ func (d *DB) getConnection() (*sql.DB, error) {
 
 	db, err := sql.Open("postgres", psqlInfo)
 	if err != nil {
-		log.Fatalf("Failed to connect to the database: %v\n", err)
+		return nil, err
 	}
 	return db, err
 }
 
 func (d *DB) CreateProduct(product Product) (int, error) {
 	db, err := d.getConnection()
+	if err != nil {
+		return 0, nil
+	}
 	defer db.Close()
 
 	sqlStatement := `
@@ -63,8 +65,11 @@ func (d *DB) CreateProduct(product Product) (int, error) {
 	return id, nil
 }
 
-func (d *DB) GetProductByID(id int64) (Product, error) {
+func (d *DB) GetProductByID(id int64) (*Product, error) {
 	db, err := d.getConnection()
+	if err != nil {
+		return nil, nil
+	}
 	defer db.Close()
 
 	sqlStatement := `SELECT id, title, image_url, description FROM products WHERE id = $1`
@@ -72,17 +77,20 @@ func (d *DB) GetProductByID(id int64) (Product, error) {
 	err = db.QueryRow(sqlStatement, id).Scan(&product.Id, &product.Title, &product.ImageUrl, &product.Description)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
-			return product, constant.ProductNotFoundError
+			return &product, constant.ProductNotFoundError
 		}
-		return product, err
+		return &product, err
 	}
-	return product, nil
+	return &product, nil
 }
 
 func (d *DB) GetProducts() ([]Product, error) {
 	var products []Product
 
 	db, err := d.getConnection()
+	if err != nil {
+		return nil, nil
+	}
 	defer db.Close()
 
 	sqlStatement := `SELECT id, title, image_url, description FROM products`
@@ -111,6 +119,9 @@ func (d *DB) GetProducts() ([]Product, error) {
 
 func (d *DB) UpdateProduct(product Product) (int, error) {
 	db, err := d.getConnection()
+	if err != nil {
+		return 0, nil
+	}
 	defer db.Close()
 
 	sqlStatement := `
@@ -136,6 +147,9 @@ func (d *DB) UpdateProduct(product Product) (int, error) {
 
 func (d *DB) DeleteProduct(id int64) (int, error) {
 	db, err := d.getConnection()
+	if err != nil {
+		return 0, nil
+	}
 	defer db.Close()
 
 	sqlStatement := `
@@ -151,6 +165,9 @@ func (d *DB) DeleteProduct(id int64) (int, error) {
 		return 0, err
 	}
 
-	fmt.Printf("%d rows affected\n", count)
+	if count == 0 {
+		return 0, constant.ProductNotFoundError
+	}
+
 	return int(count), nil
 }

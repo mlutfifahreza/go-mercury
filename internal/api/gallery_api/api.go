@@ -37,6 +37,7 @@ func (api *API) SetupRouter() {
 	api.engine.GET("/healthcheck", HealthCheck)
 
 	api.engine.GET("/products/:id", api.galleryHandler.getProduct)
+	api.engine.DELETE("/products/:id", api.galleryHandler.deleteProduct)
 	api.engine.POST("/products", api.galleryHandler.createProduct)
 	api.engine.PATCH("/products", api.galleryHandler.updateProduct)
 }
