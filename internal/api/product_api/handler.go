@@ -61,7 +61,7 @@ func (h *ProductHandler) GetProductDetail(c *gin.Context) {
 			return
 		}
 
-		log.WithError(err).Error("galleryService.GetProduct")
+		log.WithError(err).Error("galleryService.GetProductDetail")
 		general.CreateFailResponse(c, http.StatusInternalServerError, err)
 		return
 	}
