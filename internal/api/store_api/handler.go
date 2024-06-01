@@ -3,7 +3,6 @@ package store_api
 import (
 	"errors"
 	"net/http"
-	"strconv"
 
 	"github.com/gin-gonic/gin"
 	log "github.com/sirupsen/logrus"
@@ -26,13 +25,7 @@ func NewStoreHandler(galleryService *gallery_service.Service) *StoreHandler {
 }
 
 func (h *StoreHandler) GetStore(c *gin.Context) {
-
-	id, err := strconv.Atoi(c.Param("id"))
-	if err != nil {
-		general.CreateFailResponse(c, http.StatusBadRequest, constant.ErrorInvalidParam)
-		return
-	}
-
+	id := c.Param("id")
 	store, err := h.galleryService.GetStore(id)
 	if err != nil {
 		if errors.Is(err, constant.StoreNotFoundError) {
@@ -49,13 +42,9 @@ func (h *StoreHandler) GetStore(c *gin.Context) {
 }
 
 func (h *StoreHandler) DeleteStore(c *gin.Context) {
-	id, err := strconv.Atoi(c.Param("id"))
-	if err != nil {
-		general.CreateFailResponse(c, http.StatusBadRequest, constant.ErrorInvalidParam)
-		return
-	}
+	id := c.Param("id")
 
-	_, err = h.galleryService.DeleteStore(id)
+	_, err := h.galleryService.DeleteStore(id)
 	if err != nil {
 		if errors.Is(err, constant.StoreNotFoundError) {
 			general.CreateFailResponse(c, http.StatusNotFound, err)
@@ -78,18 +67,19 @@ func (h *StoreHandler) CreateStore(c *gin.Context) {
 	}
 
 	newStore := gallery_db.Store{
+		Id:   reqBody.Id,
 		Name: reqBody.Name,
 		Icon: reqBody.Icon,
 	}
 
-	id, err := h.galleryService.CreateStore(newStore)
+	err = h.galleryService.CreateStore(newStore)
 	if err != nil {
 		log.WithError(err).Error("galleryService.CreateStore")
 		general.CreateFailResponse(c, http.StatusInternalServerError, err)
 		return
 	}
 
-	general.CreateSuccessResponse(c, CreateStoreResponse{Id: id})
+	general.CreateSuccessResponse(c, nil)
 }
 
 func (h *StoreHandler) UpdateStore(c *gin.Context) {
@@ -100,7 +90,7 @@ func (h *StoreHandler) UpdateStore(c *gin.Context) {
 	}
 
 	store := gallery_db.Store{
-		Id:   int64(reqBody.Id),
+		Id:   reqBody.Id,
 		Name: reqBody.Name,
 		Icon: reqBody.Icon,
 	}

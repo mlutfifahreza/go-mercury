@@ -8,7 +8,14 @@ type Product struct {
 }
 
 type Store struct {
-	Id   int64  `json:"id,omitempty"`
+	Id   string `json:"id,omitempty"`
 	Name string `json:"name,omitempty"`
 	Icon string `json:"icon,omitempty"`
+}
+
+type Link struct {
+	Id        int    `json:"id"`
+	ProductId int    `json:"product_id"`
+	StoreId   string `json:"store_id"`
+	Link      string `json:"link"`
 }

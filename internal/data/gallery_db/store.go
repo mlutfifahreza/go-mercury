@@ -7,27 +7,25 @@ import (
 	"go-mercury/pkg/constant"
 )
 
-func (d *DB) CreateStore(store Store) (int, error) {
+func (d *DB) CreateStore(store Store) error {
 	db, err := d.getConnection()
 	if err != nil {
-		return 0, err
+		return err
 	}
 	defer db.Close()
 
 	sqlStatement := `
-		INSERT INTO stores (name, icon)
-		VALUES ($1, $2)
-		RETURNING id`
-	id := 0
-	err = db.QueryRow(sqlStatement, store.Name, store.Icon).Scan(&id)
+		INSERT INTO stores (id, name, icon)
+		VALUES ($1, $2, $3)`
+	err = db.QueryRow(sqlStatement, store.Id, store.Name, store.Icon).Err()
 	if err != nil {
-		return 0, err
+		return err
 	}
 
-	return id, nil
+	return nil
 }
 
-func (d *DB) GetStoreByID(id int64) (*Store, error) {
+func (d *DB) GetStoreByID(id string) (*Store, error) {
 	db, err := d.getConnection()
 	if err != nil {
 		return nil, err
@@ -107,7 +105,7 @@ func (d *DB) UpdateStore(store Store) (int, error) {
 	return int(count), nil
 }
 
-func (d *DB) DeleteStore(id int64) (int, error) {
+func (d *DB) DeleteStore(id string) (int, error) {
 	db, err := d.getConnection()
 	if err != nil {
 		return 0, err
