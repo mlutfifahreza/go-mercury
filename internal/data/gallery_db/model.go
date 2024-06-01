@@ -8,7 +8,7 @@ type Product struct {
 }
 
 type Store struct {
-	Id   int64  `json:"id,omitempty"`
+	Id   string `json:"id,omitempty"`
 	Name string `json:"name,omitempty"`
 	Icon string `json:"icon,omitempty"`
 }
