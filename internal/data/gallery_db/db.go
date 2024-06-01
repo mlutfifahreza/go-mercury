@@ -46,7 +46,7 @@ func (d *DB) getConnection() (*sql.DB, error) {
 	return db, err
 }
 
-func (d *DB) CreateProduct(product Product) error {
+func (d *DB) CreateProduct(product Product) (int, error) {
 	db, err := d.getConnection()
 	defer db.Close()
 
@@ -55,12 +55,12 @@ func (d *DB) CreateProduct(product Product) error {
 		VALUES ($1, $2, $3)
 		RETURNING id`
 	id := 0
-	err = db.QueryRow(sqlStatement, product.Title, product.ImageURL, product.Description).Scan(&id)
+	err = db.QueryRow(sqlStatement, product.Title, product.ImageUrl, product.Description).Scan(&id)
 	if err != nil {
-		return err
+		return 0, err
 	}
 
-	return nil
+	return id, nil
 }
 
 func (d *DB) GetProductByID(id int64) (Product, error) {
@@ -69,7 +69,7 @@ func (d *DB) GetProductByID(id int64) (Product, error) {
 
 	sqlStatement := `SELECT id, title, image_url, description FROM products WHERE id = $1`
 	var product Product
-	err = db.QueryRow(sqlStatement, id).Scan(&product.ID, &product.Title, &product.ImageURL, &product.Description)
+	err = db.QueryRow(sqlStatement, id).Scan(&product.ID, &product.Title, &product.ImageUrl, &product.Description)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return product, constant.ProductNotFoundError
@@ -94,7 +94,7 @@ func (d *DB) GetProducts() ([]Product, error) {
 
 	for rows.Next() {
 		var product Product
-		err := rows.Scan(&product.ID, &product.Title, &product.ImageURL, &product.Description)
+		err := rows.Scan(&product.ID, &product.Title, &product.ImageUrl, &product.Description)
 		if err != nil {
 			return nil, err
 		}
@@ -117,7 +117,7 @@ func (d *DB) UpdateProduct(product Product) (int, error) {
 		UPDATE products
 		SET title = $2, image_url = $3, description = $4
 		WHERE id = $1`
-	res, err := db.Exec(sqlStatement, product.ID, product.Title, product.ImageURL, product.Description)
+	res, err := db.Exec(sqlStatement, product.ID, product.Title, product.ImageUrl, product.Description)
 	if err != nil {
 		return 0, err
 	}
