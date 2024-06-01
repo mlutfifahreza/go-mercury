@@ -1,4 +1,4 @@
-package gallery_api
+package product_api
 
 import (
 	"errors"
@@ -15,17 +15,17 @@ import (
 	"go-mercury/pkg/util"
 )
 
-type GalleryHandler struct {
+type ProductHandler struct {
 	galleryService *gallery_service.Service
 }
 
-func NewGalleryHandler(galleryService *gallery_service.Service) *GalleryHandler {
-	return &GalleryHandler{
+func NewGalleryHandler(galleryService *gallery_service.Service) *ProductHandler {
+	return &ProductHandler{
 		galleryService: galleryService,
 	}
 }
 
-func (h *GalleryHandler) GetProduct(c *gin.Context) {
+func (h *ProductHandler) GetProduct(c *gin.Context) {
 
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
@@ -48,7 +48,7 @@ func (h *GalleryHandler) GetProduct(c *gin.Context) {
 	general.CreateSuccessResponse(c, product)
 }
 
-func (h *GalleryHandler) DeleteProduct(c *gin.Context) {
+func (h *ProductHandler) DeleteProduct(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
 		general.CreateFailResponse(c, http.StatusBadRequest, constant.ErrorInvalidParam)
@@ -70,7 +70,7 @@ func (h *GalleryHandler) DeleteProduct(c *gin.Context) {
 	general.CreateSuccessResponse(c, nil)
 }
 
-func (h *GalleryHandler) CreateProduct(c *gin.Context) {
+func (h *ProductHandler) CreateProduct(c *gin.Context) {
 	reqBody, err := util.ParseRequestBody[CreateProductRequest](c)
 	if err != nil {
 		general.CreateFailResponse(c, http.StatusBadRequest, err)
@@ -93,7 +93,7 @@ func (h *GalleryHandler) CreateProduct(c *gin.Context) {
 	general.CreateSuccessResponse(c, CreateProductResponse{Id: id})
 }
 
-func (h *GalleryHandler) UpdateProduct(c *gin.Context) {
+func (h *ProductHandler) UpdateProduct(c *gin.Context) {
 	reqBody, err := util.ParseRequestBody[UpdateProductRequest](c)
 	if err != nil {
 		general.CreateFailResponse(c, http.StatusBadRequest, err)
