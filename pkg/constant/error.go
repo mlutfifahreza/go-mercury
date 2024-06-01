@@ -3,5 +3,7 @@ package constant
 import "errors"
 
 var (
-	ProductNotFoundError = errors.New("product-not-found")
+	ErrorInvalidParam = errors.New("invalid_param")
+
+	ProductNotFoundError = errors.New("product_not_found")
 )
