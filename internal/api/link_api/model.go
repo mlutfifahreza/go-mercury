@@ -1,4 +1,4 @@
-package Link_api
+package link_api
 
 type CreateLinkRequest struct {
 	ProductId int    `json:"product_id" validate:"required"`

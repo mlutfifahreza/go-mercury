@@ -4,7 +4,7 @@ import (
 	"github.com/gin-gonic/gin"
 	log "github.com/sirupsen/logrus"
 
-	Link_api "go-mercury/internal/api/link_api"
+	"go-mercury/internal/api/link_api"
 	"go-mercury/internal/api/product_api"
 	"go-mercury/internal/api/store_api"
 	"go-mercury/internal/data/gallery_db"
@@ -15,7 +15,7 @@ type App struct {
 	engine         *gin.Engine
 	productHandler *product_api.ProductHandler
 	storeHandler   *store_api.StoreHandler
-	linkHandler    *Link_api.LinkHandler
+	linkHandler    *link_api.LinkHandler
 }
 
 func NewApp() App {
@@ -38,7 +38,7 @@ func (api *App) SetupDependencies() error {
 	galleryService := gallery_service.NewService(galleryDB)
 	api.productHandler = product_api.NewProductHandler(&galleryService)
 	api.storeHandler = store_api.NewStoreHandler(&galleryService)
-	api.linkHandler = Link_api.NewLinkHandler(&galleryService)
+	api.linkHandler = link_api.NewLinkHandler(&galleryService)
 
 	return nil
 }

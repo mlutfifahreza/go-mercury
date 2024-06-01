@@ -1,4 +1,4 @@
-package Link_api
+package link_api
 
 import (
 	"errors"
