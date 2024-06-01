@@ -1,4 +1,4 @@
-package product_api
+package store_api
 
 import (
 	"errors"
@@ -15,17 +15,17 @@ import (
 	"go-mercury/pkg/util"
 )
 
-type ProductHandler struct {
+type StoreHandler struct {
 	galleryService *gallery_service.Service
 }
 
-func NewProductHandler(galleryService *gallery_service.Service) *ProductHandler {
-	return &ProductHandler{
+func NewStoreHandler(galleryService *gallery_service.Service) *StoreHandler {
+	return &StoreHandler{
 		galleryService: galleryService,
 	}
 }
 
-func (h *ProductHandler) GetProduct(c *gin.Context) {
+func (h *StoreHandler) GetStore(c *gin.Context) {
 
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
@@ -33,36 +33,36 @@ func (h *ProductHandler) GetProduct(c *gin.Context) {
 		return
 	}
 
-	product, err := h.galleryService.GetProduct(id)
+	store, err := h.galleryService.GetStore(id)
 	if err != nil {
-		if errors.Is(err, constant.ProductNotFoundError) {
+		if errors.Is(err, constant.StoreNotFoundError) {
 			general.CreateFailResponse(c, http.StatusNotFound, err)
 			return
 		}
 
-		log.WithError(err).Error("galleryService.GetProduct")
+		log.WithError(err).Error("galleryService.GetStore")
 		general.CreateFailResponse(c, http.StatusInternalServerError, err)
 		return
 	}
 
-	general.CreateSuccessResponse(c, product)
+	general.CreateSuccessResponse(c, store)
 }
 
-func (h *ProductHandler) DeleteProduct(c *gin.Context) {
+func (h *StoreHandler) DeleteStore(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
 		general.CreateFailResponse(c, http.StatusBadRequest, constant.ErrorInvalidParam)
 		return
 	}
 
-	_, err = h.galleryService.DeleteProduct(id)
+	_, err = h.galleryService.DeleteStore(id)
 	if err != nil {
-		if errors.Is(err, constant.ProductNotFoundError) {
+		if errors.Is(err, constant.StoreNotFoundError) {
 			general.CreateFailResponse(c, http.StatusNotFound, err)
 			return
 		}
 
-		log.WithError(err).Error("galleryService.DeleteProduct")
+		log.WithError(err).Error("galleryService.DeleteStore")
 		general.CreateFailResponse(c, http.StatusInternalServerError, err)
 		return
 	}
@@ -70,51 +70,49 @@ func (h *ProductHandler) DeleteProduct(c *gin.Context) {
 	general.CreateSuccessResponse(c, nil)
 }
 
-func (h *ProductHandler) CreateProduct(c *gin.Context) {
-	reqBody, err := util.ParseRequestBody[CreateProductRequest](c)
+func (h *StoreHandler) CreateStore(c *gin.Context) {
+	reqBody, err := util.ParseRequestBody[CreateStoreRequest](c)
 	if err != nil {
 		general.CreateFailResponse(c, http.StatusBadRequest, err)
 		return
 	}
 
-	newProduct := gallery_db.Product{
-		Title:       reqBody.Title,
-		ImageUrl:    reqBody.ImageUrl,
-		Description: reqBody.Description,
+	newStore := gallery_db.Store{
+		Name: reqBody.Name,
+		Icon: reqBody.Icon,
 	}
 
-	id, err := h.galleryService.CreateProduct(newProduct)
+	id, err := h.galleryService.CreateStore(newStore)
 	if err != nil {
-		log.WithError(err).Error("galleryService.CreateProduct")
+		log.WithError(err).Error("galleryService.CreateStore")
 		general.CreateFailResponse(c, http.StatusInternalServerError, err)
 		return
 	}
 
-	general.CreateSuccessResponse(c, CreateProductResponse{Id: id})
+	general.CreateSuccessResponse(c, CreateStoreResponse{Id: id})
 }
 
-func (h *ProductHandler) UpdateProduct(c *gin.Context) {
-	reqBody, err := util.ParseRequestBody[UpdateProductRequest](c)
+func (h *StoreHandler) UpdateStore(c *gin.Context) {
+	reqBody, err := util.ParseRequestBody[UpdateStoreRequest](c)
 	if err != nil {
 		general.CreateFailResponse(c, http.StatusBadRequest, err)
 		return
 	}
 
-	product := gallery_db.Product{
-		Id:          int64(reqBody.Id),
-		Title:       reqBody.Title,
-		ImageUrl:    reqBody.ImageUrl,
-		Description: reqBody.Description,
+	store := gallery_db.Store{
+		Id:   int64(reqBody.Id),
+		Name: reqBody.Name,
+		Icon: reqBody.Icon,
 	}
 
-	_, err = h.galleryService.UpdateProduct(product)
+	_, err = h.galleryService.UpdateStore(store)
 	if err != nil {
-		if errors.Is(err, constant.ProductNotFoundError) {
+		if errors.Is(err, constant.StoreNotFoundError) {
 			general.CreateFailResponse(c, http.StatusNotFound, err)
 			return
 		}
 
-		log.WithError(err).Error("galleryService.UpdateProduct")
+		log.WithError(err).Error("galleryService.UpdateStore")
 		general.CreateFailResponse(c, http.StatusInternalServerError, err)
 		return
 	}

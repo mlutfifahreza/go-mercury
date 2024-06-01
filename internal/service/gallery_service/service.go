@@ -41,3 +41,35 @@ func (s Service) UpdateProduct(product gallery_db.Product) (int, error) {
 	}
 	return affectedCount, nil
 }
+
+func (s Service) GetStore(id int) (*gallery_db.Store, error) {
+	store, err := s.db.GetStoreByID(int64(id))
+	if err != nil {
+		return nil, err
+	}
+	return store, nil
+}
+
+func (s Service) DeleteStore(id int) (int, error) {
+	affectedCount, err := s.db.DeleteStore(int64(id))
+	if err != nil {
+		return 0, err
+	}
+	return affectedCount, nil
+}
+
+func (s Service) CreateStore(store gallery_db.Store) (int, error) {
+	id, err := s.db.CreateStore(store)
+	if err != nil {
+		return 0, err
+	}
+	return id, nil
+}
+
+func (s Service) UpdateStore(store gallery_db.Store) (int, error) {
+	affectedCount, err := s.db.UpdateStore(store)
+	if err != nil {
+		return 0, err
+	}
+	return affectedCount, nil
+}
