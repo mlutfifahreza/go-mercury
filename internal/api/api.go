@@ -4,14 +4,14 @@ import (
 	"github.com/gin-gonic/gin"
 	log "github.com/sirupsen/logrus"
 
-	"go-mercury/internal/api/gallery_api"
+	"go-mercury/internal/api/product_api"
 	"go-mercury/internal/data/gallery_db"
 	"go-mercury/internal/service/gallery_service"
 )
 
 type App struct {
 	engine         *gin.Engine
-	galleryHandler *gallery_api.GalleryHandler
+	productHandler *product_api.ProductHandler
 }
 
 func NewApp() App {
@@ -32,7 +32,7 @@ func (api *App) Run() error {
 func (api *App) SetupDependencies() error {
 	galleryDB := gallery_db.NewDB("127.0.0.1", 5432, "username", "password", "gallery_db")
 	galleryService := gallery_service.NewService(galleryDB)
-	api.galleryHandler = gallery_api.NewGalleryHandler(&galleryService)
+	api.productHandler = product_api.NewGalleryHandler(&galleryService)
 
 	return nil
 }
@@ -41,8 +41,8 @@ func (api *App) SetupRouter() {
 	api.engine.GET("/ping", Ping)
 	api.engine.GET("/healthcheck", HealthCheck)
 
-	api.engine.GET("/products/:id", api.galleryHandler.GetProduct)
-	api.engine.DELETE("/products/:id", api.galleryHandler.DeleteProduct)
-	api.engine.POST("/products", api.galleryHandler.CreateProduct)
-	api.engine.PATCH("/products", api.galleryHandler.UpdateProduct)
+	api.engine.GET("/products/:id", api.productHandler.GetProduct)
+	api.engine.DELETE("/products/:id", api.productHandler.DeleteProduct)
+	api.engine.POST("/products", api.productHandler.CreateProduct)
+	api.engine.PATCH("/products", api.productHandler.UpdateProduct)
 }

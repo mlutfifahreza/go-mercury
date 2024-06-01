@@ -1,4 +1,4 @@
-package gallery_api
+package product_api
 
 type CreateProductRequest struct {
 	Title       string `json:"title" validate:"required,min=3,max=256"`
