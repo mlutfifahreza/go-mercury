@@ -1,6 +1,8 @@
 package gallery_service
 
-import "go-mercury/internal/data/gallery_db"
+import (
+	"go-mercury/internal/data/gallery_db"
+)
 
 type Service struct {
 	db *gallery_db.DB
@@ -72,6 +74,50 @@ func (s Service) CreateStore(store gallery_db.Store) error {
 
 func (s Service) UpdateStore(store gallery_db.Store) (int, error) {
 	affectedCount, err := s.db.UpdateStore(store)
+	if err != nil {
+		return 0, err
+	}
+	return affectedCount, nil
+}
+
+// LINK
+
+func (s Service) GetLink(id int) (*gallery_db.Link, error) {
+	link, err := s.db.GetLinkByID(int64(id))
+	if err != nil {
+		return nil, err
+	}
+	return link, nil
+}
+
+func (s Service) DeleteLink(id int) (int, error) {
+	affectedCount, err := s.db.DeleteLink(int64(id))
+	if err != nil {
+		return 0, err
+	}
+	return affectedCount, nil
+}
+
+func (s Service) CreateLink(link gallery_db.Link) (int, error) {
+	_, err := s.GetProduct(link.ProductId)
+	if err != nil {
+		return 0, err
+	}
+
+	_, err = s.GetStore(link.StoreId)
+	if err != nil {
+		return 0, err
+	}
+
+	id, err := s.db.CreateLink(link)
+	if err != nil {
+		return 0, err
+	}
+	return id, nil
+}
+
+func (s Service) UpdateLink(link gallery_db.Link) (int, error) {
+	affectedCount, err := s.db.UpdateLink(link)
 	if err != nil {
 		return 0, err
 	}
