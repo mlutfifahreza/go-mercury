@@ -32,7 +32,7 @@ func (h *LinkHandler) GetLink(c *gin.Context) {
 		return
 	}
 
-	Link, err := h.galleryService.GetLink(id)
+	link, err := h.galleryService.GetLink(id)
 	if err != nil {
 		if errors.Is(err, constant.LinkNotFoundError) {
 			general.CreateFailResponse(c, http.StatusNotFound, err)
@@ -44,7 +44,7 @@ func (h *LinkHandler) GetLink(c *gin.Context) {
 		return
 	}
 
-	general.CreateSuccessResponse(c, Link)
+	general.CreateSuccessResponse(c, link)
 }
 
 func (h *LinkHandler) DeleteLink(c *gin.Context) {
