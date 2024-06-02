@@ -25,6 +25,23 @@ func NewProductHandler(galleryService *gallery_service.Service) *ProductHandler 
 	}
 }
 
+func (h *ProductHandler) GetProductList(c *gin.Context) {
+	reqBody, err := util.ParseRequestBody[GetProductListRequest](c)
+	if err != nil {
+		general.CreateFailResponse(c, http.StatusBadRequest, err)
+		return
+	}
+
+	product, err := h.galleryService.GetProductList(reqBody.ConvertToDBFilter())
+	if err != nil {
+		log.WithError(err).Error("galleryService.GetProduct")
+		general.CreateFailResponse(c, http.StatusInternalServerError, err)
+		return
+	}
+
+	general.CreateSuccessResponse(c, product)
+}
+
 func (h *ProductHandler) GetProduct(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {

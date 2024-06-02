@@ -47,11 +47,12 @@ func (api *App) SetupRouter() {
 	api.engine.GET("/ping", Ping)
 	api.engine.GET("/healthcheck", HealthCheck)
 
-	api.engine.GET("/products/:id", api.productHandler.GetProduct)
-	api.engine.GET("/products/:id/detail", api.productHandler.GetProductDetail)
-	api.engine.DELETE("/products/:id", api.productHandler.DeleteProduct)
+	api.engine.GET("/products", api.productHandler.GetProductList)
 	api.engine.POST("/products", api.productHandler.CreateProduct)
 	api.engine.PATCH("/products", api.productHandler.UpdateProduct)
+	api.engine.GET("/products/:id", api.productHandler.GetProduct)
+	api.engine.DELETE("/products/:id", api.productHandler.DeleteProduct)
+	api.engine.GET("/products/:id/detail", api.productHandler.GetProductDetail)
 
 	api.engine.GET("/stores/:id", api.storeHandler.GetStore)
 	api.engine.DELETE("/stores/:id", api.storeHandler.DeleteStore)
