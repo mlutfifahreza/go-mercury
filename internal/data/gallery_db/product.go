@@ -99,7 +99,7 @@ func (d *DB) GetProductDetail(id int64) (*ProductDetail, error) {
 	return productDetail, nil
 }
 
-func (d *DB) GetProducts() ([]Product, error) {
+func (d *DB) GetProducts(filter ProductListFilter) ([]Product, error) {
 	var products []Product
 
 	db, err := d.getConnection()
@@ -108,8 +108,13 @@ func (d *DB) GetProducts() ([]Product, error) {
 	}
 	defer db.Close()
 
-	sqlStatement := `SELECT id, title, image_url, description FROM products`
-	rows, err := db.Query(sqlStatement)
+	sqlStatement := `
+		SELECT id, title, image_url, description 
+		FROM products 
+		ORDER BY id DESC 
+		OFFSET $1
+		LIMIT $2`
+	rows, err := db.Query(sqlStatement, filter.Offset, filter.Limit)
 	if err != nil {
 		return nil, err
 	}
