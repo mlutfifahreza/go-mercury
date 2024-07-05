@@ -15,3 +15,6 @@ check:
 
 run:
 	go run cmd/server/server.go
+
+db-migrate:
+	migrate -path script/migration/ -database "postgresql://localhost:5432/gallery_db?sslmode=disable" -verbose up

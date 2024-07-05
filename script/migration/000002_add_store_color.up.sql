@@ -1,0 +1,1 @@
+ALTER TABLE "stores" ADD  "color" VARCHAR(7) NOT NULL DEFAULT '#FFFFFF';

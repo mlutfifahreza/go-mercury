@@ -69,7 +69,7 @@ func (d *DB) GetProductDetail(id int64) (*ProductDetail, error) {
 	}
 
 	// Query for the associated links
-	linkDetailsQuery := `SELECT links.id, links.link, stores.name, stores.icon
+	linkDetailsQuery := `SELECT links.id, links.link, stores.name, stores.icon, stores.color
        FROM links 
        JOIN stores ON links.store_id = stores.id
        WHERE product_id = $1`
@@ -86,6 +86,7 @@ func (d *DB) GetProductDetail(id int64) (*ProductDetail, error) {
 			&linkDetail.Link,
 			&linkDetail.StoreName,
 			&linkDetail.StoreIcon,
+			&linkDetail.StoreColor,
 		); err != nil {
 			return nil, err
 		}
