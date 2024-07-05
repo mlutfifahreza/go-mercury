@@ -26,13 +26,14 @@ func NewProductHandler(galleryService *gallery_service.Service) *ProductHandler 
 }
 
 func (h *ProductHandler) GetProductList(c *gin.Context) {
-	reqBody, err := util.ParseRequestBody[GetProductListRequest](c)
-	if err != nil {
-		general.CreateFailResponse(c, http.StatusBadRequest, err)
-		return
+	pageNumber, _ := strconv.Atoi(c.Query(queryPageNumber))
+	pageSize, _ := strconv.Atoi(c.Query(queryPageSize))
+	req := GetProductListRequest{
+		PageNumber: pageNumber,
+		PageSize:   pageSize,
 	}
 
-	product, err := h.galleryService.GetProductList(reqBody.ConvertToDBFilter())
+	product, err := h.galleryService.GetProductList(req.ConvertToDBFilter())
 	if err != nil {
 		log.WithError(err).Error("galleryService.GetProduct")
 		general.CreateFailResponse(c, http.StatusInternalServerError, err)
