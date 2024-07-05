@@ -8,9 +8,10 @@ type Product struct {
 }
 
 type Store struct {
-	Id   string `json:"id"`
-	Name string `json:"name"`
-	Icon string `json:"icon"`
+	Id    string `json:"id"`
+	Name  string `json:"name"`
+	Icon  string `json:"icon"`
+	Color string `json:"color"`
 }
 
 type Link struct {
@@ -21,10 +22,11 @@ type Link struct {
 }
 
 type LinkDetail struct {
-	ID        int    `json:"id"`
-	Link      string `json:"link"`
-	StoreName string `json:"store_name"`
-	StoreIcon string `json:"store_icon"`
+	ID         int    `json:"id"`
+	Link       string `json:"link"`
+	StoreName  string `json:"store_name"`
+	StoreIcon  string `json:"store_icon"`
+	StoreColor string `json:"store_color"`
 }
 
 type ProductDetail struct {

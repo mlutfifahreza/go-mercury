@@ -67,9 +67,10 @@ func (h *StoreHandler) CreateStore(c *gin.Context) {
 	}
 
 	newStore := gallery_db.Store{
-		Id:   reqBody.Id,
-		Name: reqBody.Name,
-		Icon: reqBody.Icon,
+		Id:    reqBody.Id,
+		Name:  reqBody.Name,
+		Icon:  reqBody.Icon,
+		Color: reqBody.Color,
 	}
 
 	err = h.galleryService.CreateStore(newStore)
@@ -90,9 +91,10 @@ func (h *StoreHandler) UpdateStore(c *gin.Context) {
 	}
 
 	store := gallery_db.Store{
-		Id:   reqBody.Id,
-		Name: reqBody.Name,
-		Icon: reqBody.Icon,
+		Id:    reqBody.Id,
+		Name:  reqBody.Name,
+		Icon:  reqBody.Icon,
+		Color: reqBody.Color,
 	}
 
 	_, err = h.galleryService.UpdateStore(store)
