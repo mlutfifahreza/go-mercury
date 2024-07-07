@@ -100,12 +100,13 @@ func (d *DB) GetProductDetail(id int64) (*ProductDetail, error) {
 	return productDetail, nil
 }
 
-func (d *DB) GetProducts(filter ProductListFilter) ([]Product, error) {
+func (d *DB) GetProducts(filter ProductListFilter) ([]Product, int, error) {
 	var products []Product
+	total := 0
 
 	db, err := d.getConnection()
 	if err != nil {
-		return nil, err
+		return nil, total, err
 	}
 	defer db.Close()
 
@@ -117,7 +118,7 @@ func (d *DB) GetProducts(filter ProductListFilter) ([]Product, error) {
 		LIMIT $2`
 	rows, err := db.Query(sqlStatement, filter.Offset, filter.Limit)
 	if err != nil {
-		return nil, err
+		return nil, total, err
 	}
 	defer rows.Close()
 
@@ -125,17 +126,20 @@ func (d *DB) GetProducts(filter ProductListFilter) ([]Product, error) {
 		var product Product
 		err := rows.Scan(&product.Id, &product.Title, &product.ImageUrl, &product.Description)
 		if err != nil {
-			return nil, err
+			return nil, total, err
 		}
 		products = append(products, product)
 	}
 
 	err = rows.Err()
 	if err != nil {
-		return nil, err
+		return nil, total, err
 	}
 
-	return products, nil
+	sqlStatement = `SELECT COUNT(*) FROM products`
+	err = db.QueryRow(sqlStatement).Scan(&total)
+
+	return products, total, nil
 }
 
 func (d *DB) UpdateProduct(product Product) (int, error) {

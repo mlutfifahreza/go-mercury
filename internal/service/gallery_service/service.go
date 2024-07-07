@@ -13,12 +13,15 @@ func NewService(db *gallery_db.DB) Service {
 }
 
 // PRODUCT
-func (s Service) GetProductList(filter gallery_db.ProductListFilter) ([]gallery_db.Product, error) {
-	productList, err := s.db.GetProducts(filter)
+func (s Service) GetProductList(filter gallery_db.ProductListFilter) (*gallery_db.ProductList, error) {
+	productList, total, err := s.db.GetProducts(filter)
 	if err != nil {
 		return nil, err
 	}
-	return productList, nil
+	return &gallery_db.ProductList{
+		Products: productList,
+		Total:    total,
+	}, nil
 }
 
 func (s Service) GetProduct(id int) (*gallery_db.Product, error) {

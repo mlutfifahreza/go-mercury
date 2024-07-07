@@ -33,14 +33,14 @@ func (h *ProductHandler) GetProductList(c *gin.Context) {
 		PageSize:   pageSize,
 	}
 
-	product, err := h.galleryService.GetProductList(req.ConvertToDBFilter())
+	productList, err := h.galleryService.GetProductList(req.ConvertToDBFilter())
 	if err != nil {
 		log.WithError(err).Error("galleryService.GetProduct")
 		general.CreateFailResponse(c, http.StatusInternalServerError, err)
 		return
 	}
 
-	general.CreateSuccessResponse(c, product)
+	general.CreateSuccessResponse(c, productList)
 }
 
 func (h *ProductHandler) GetProduct(c *gin.Context) {
