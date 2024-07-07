@@ -7,6 +7,11 @@ type Product struct {
 	Description string `json:"description"`
 }
 
+type ProductList struct {
+	Products []Product `json:"products,omitempty"`
+	Total    int       `json:"total,omitempty"`
+}
+
 type Store struct {
 	Id    string `json:"id"`
 	Name  string `json:"name"`
