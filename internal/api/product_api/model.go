@@ -1,10 +1,14 @@
 package product_api
 
-import "go-mercury/internal/data/gallery_db"
+import (
+	"go-mercury/internal/data/gallery_db"
+)
 
 type GetProductListRequest struct {
-	PageNumber int `json:"page_number,omitempty"`
-	PageSize   int `json:"page_size,omitempty"`
+	PageNumber   int              `json:"page_number,omitempty"`
+	PageSize     int              `json:"page_size,omitempty"`
+	OrderByField OrderByFieldEnum `json:"order_by_field,omitempty"`
+	OrderByValue OrderByValueEnum `json:"order_by_value,omitempty"`
 }
 
 func (r GetProductListRequest) ConvertToDBFilter() gallery_db.ProductListFilter {
@@ -18,9 +22,19 @@ func (r GetProductListRequest) ConvertToDBFilter() gallery_db.ProductListFilter 
 		r.PageSize = maxSize
 	}
 
+	if r.OrderByField == "" || !r.OrderByField.IsValid() {
+		r.OrderByField = OrderByFieldID
+	}
+
+	if r.OrderByValue == "" || !r.OrderByValue.IsValid() {
+		r.OrderByValue = OrderByValueAscending
+	}
+
 	return gallery_db.ProductListFilter{
-		Offset: (r.PageNumber - 1) * r.PageSize,
-		Limit:  r.PageSize,
+		Offset:       (r.PageNumber - 1) * r.PageSize,
+		Limit:        r.PageSize,
+		OrderByField: string(r.OrderByField),
+		OrderByValue: string(r.OrderByValue),
 	}
 }
 

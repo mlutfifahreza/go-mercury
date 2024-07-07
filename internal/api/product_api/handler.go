@@ -28,9 +28,13 @@ func NewProductHandler(galleryService *gallery_service.Service) *ProductHandler 
 func (h *ProductHandler) GetProductList(c *gin.Context) {
 	pageNumber, _ := strconv.Atoi(c.Query(queryPageNumber))
 	pageSize, _ := strconv.Atoi(c.Query(queryPageSize))
+	orderByField := c.Query(queryOrderByField)
+	orderByValue := c.Query(queryOrderByValue)
 	req := GetProductListRequest{
-		PageNumber: pageNumber,
-		PageSize:   pageSize,
+		PageNumber:   pageNumber,
+		PageSize:     pageSize,
+		OrderByField: OrderByFieldEnum(orderByField),
+		OrderByValue: OrderByValueEnum(orderByValue),
 	}
 
 	productList, err := h.galleryService.GetProductList(req.ConvertToDBFilter())
