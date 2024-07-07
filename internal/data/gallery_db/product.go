@@ -3,6 +3,7 @@ package gallery_db
 import (
 	"database/sql"
 	"errors"
+	"fmt"
 
 	"go-mercury/pkg/constant"
 )
@@ -110,12 +111,14 @@ func (d *DB) GetProducts(filter ProductListFilter) ([]Product, int, error) {
 	}
 	defer db.Close()
 
-	sqlStatement := `
-		SELECT id, title, image_url, description 
+	sqlStatement := fmt.Sprintf(
+		`SELECT id, title, image_url, description 
 		FROM products 
-		ORDER BY id DESC 
-		OFFSET $1
-		LIMIT $2`
+		ORDER BY %s %s 
+		OFFSET $1 
+		LIMIT $2`,
+		filter.OrderByField,
+		filter.OrderByValue)
 	rows, err := db.Query(sqlStatement, filter.Offset, filter.Limit)
 	if err != nil {
 		return nil, total, err
