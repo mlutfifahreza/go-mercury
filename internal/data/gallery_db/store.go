@@ -53,7 +53,7 @@ func (d *DB) GetStores() ([]Store, error) {
 	}
 	defer db.Close()
 
-	sqlStatement := `SELECT id, name, icon FROM stores`
+	sqlStatement := `SELECT id, name, icon, color FROM stores`
 	rows, err := db.Query(sqlStatement)
 	if err != nil {
 		return nil, err
