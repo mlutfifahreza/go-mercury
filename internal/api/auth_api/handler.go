@@ -38,15 +38,7 @@ func (h *AuthHandler) Register(c *gin.Context) {
 		return
 	}
 
-	c.SetCookie(
-		"token",
-		jwtString,
-		int(24*time.Hour.Seconds()),
-		"/",
-		"localhost", // domain
-		false,       // secure
-		true,        // httpOnly
-	)
+	setResponseJWT(c, jwtString)
 	general.CreateSuccessResponse(c, nil)
 
 }
@@ -70,6 +62,11 @@ func (h *AuthHandler) Login(c *gin.Context) {
 		return
 	}
 
+	setResponseJWT(c, jwtString)
+	general.CreateSuccessResponse(c, nil)
+}
+
+func setResponseJWT(c *gin.Context, jwtString string) {
 	c.SetCookie(
 		"token",
 		jwtString,
@@ -79,5 +76,4 @@ func (h *AuthHandler) Login(c *gin.Context) {
 		false,       // secure
 		true,        // httpOnly
 	)
-	general.CreateSuccessResponse(c, nil)
 }
