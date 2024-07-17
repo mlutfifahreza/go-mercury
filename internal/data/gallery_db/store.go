@@ -32,7 +32,7 @@ func (d *DB) GetStoreByID(id string) (*Store, error) {
 	}
 	defer db.Close()
 
-	sqlStatement := `SELECT id, name, icon FROM stores WHERE id = $1`
+	sqlStatement := `SELECT id, name, icon, color FROM stores WHERE id = $1`
 	var store Store
 	err = db.QueryRow(sqlStatement, id).Scan(&store.Id, &store.Name, &store.Icon, &store.Color)
 	if err != nil {
