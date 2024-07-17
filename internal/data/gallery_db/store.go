@@ -16,8 +16,8 @@ func (d *DB) CreateStore(store Store) error {
 
 	sqlStatement := `
 		INSERT INTO stores (id, name, icon, color)
-		VALUES ($1, $2, $3)`
-	err = db.QueryRow(sqlStatement, store.Id, store.Name, store.Icon).Err()
+		VALUES ($1, $2, $3, $4)`
+	err = db.QueryRow(sqlStatement, store.Id, store.Name, store.Icon, store.Color).Err()
 	if err != nil {
 		return err
 	}
@@ -32,7 +32,7 @@ func (d *DB) GetStoreByID(id string) (*Store, error) {
 	}
 	defer db.Close()
 
-	sqlStatement := `SELECT id, name, icon FROM stores WHERE id = $1`
+	sqlStatement := `SELECT id, name, icon, color FROM stores WHERE id = $1`
 	var store Store
 	err = db.QueryRow(sqlStatement, id).Scan(&store.Id, &store.Name, &store.Icon, &store.Color)
 	if err != nil {
@@ -53,7 +53,7 @@ func (d *DB) GetStores() ([]Store, error) {
 	}
 	defer db.Close()
 
-	sqlStatement := `SELECT id, name, icon FROM stores`
+	sqlStatement := `SELECT id, name, icon, color FROM stores`
 	rows, err := db.Query(sqlStatement)
 	if err != nil {
 		return nil, err
