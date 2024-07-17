@@ -41,3 +41,9 @@ type ProductDetail struct {
 	Description string       `json:"description"`
 	LinkDetails []LinkDetail `json:"link_details"`
 }
+
+type User struct {
+	Username     string
+	PasswordHash string
+	Roles        []UserRole
+}
