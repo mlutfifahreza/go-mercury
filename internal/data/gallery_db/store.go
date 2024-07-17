@@ -16,8 +16,8 @@ func (d *DB) CreateStore(store Store) error {
 
 	sqlStatement := `
 		INSERT INTO stores (id, name, icon, color)
-		VALUES ($1, $2, $3)`
-	err = db.QueryRow(sqlStatement, store.Id, store.Name, store.Icon).Err()
+		VALUES ($1, $2, $3, $4)`
+	err = db.QueryRow(sqlStatement, store.Id, store.Name, store.Icon, store.Color).Err()
 	if err != nil {
 		return err
 	}
