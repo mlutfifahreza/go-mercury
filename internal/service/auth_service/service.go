@@ -18,10 +18,13 @@ type Service struct {
 }
 
 func NewService(db *gallery_db.DB) Service {
+	//TODO: UPDATE THESE USING CONFIG
 	keyString := "ABCDE"
+	saltString := "ABCDE"
 	return Service{
-		db:     db,
-		jwtKey: []byte(keyString),
+		db:           db,
+		jwtKey:       []byte(keyString),
+		passwordSalt: saltString,
 	}
 }
 
@@ -109,15 +112,13 @@ func (s Service) generateJWT(username string, roles []gallery_db.UserRole) (stri
 }
 
 func (s Service) hashPassword(password string) (string, error) {
-	//saltedPassword := password + s.passwordSalt
-	saltedPassword := password
+	saltedPassword := password + s.passwordSalt
 	bytes, err := bcrypt.GenerateFromPassword([]byte(saltedPassword), 14)
 	return string(bytes), err
 }
 
 func (s Service) checkPasswordHash(password, hash string) bool {
-	//saltedPassword := password + s.passwordSalt
-	saltedPassword := password
+	saltedPassword := password + s.passwordSalt
 	err := bcrypt.CompareHashAndPassword([]byte(hash), []byte(saltedPassword))
 	return err == nil
 }

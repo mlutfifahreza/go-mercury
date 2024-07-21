@@ -1,3 +1,6 @@
+setup:
+	brew install golangci-lint
+
 build:
 	go build -o ./out/ cmd/server/server.go
 
