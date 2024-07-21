@@ -141,6 +141,9 @@ func (d *DB) GetProducts(filter ProductListFilter) ([]Product, int, error) {
 
 	sqlStatement = `SELECT COUNT(*) FROM products`
 	err = db.QueryRow(sqlStatement).Scan(&total)
+	if err != nil {
+		return nil, total, err
+	}
 
 	return products, total, nil
 }

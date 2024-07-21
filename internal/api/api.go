@@ -4,10 +4,12 @@ import (
 	"github.com/gin-gonic/gin"
 	log "github.com/sirupsen/logrus"
 
+	"go-mercury/internal/api/auth_api"
 	"go-mercury/internal/api/link_api"
 	"go-mercury/internal/api/product_api"
 	"go-mercury/internal/api/store_api"
 	"go-mercury/internal/data/gallery_db"
+	"go-mercury/internal/service/auth_service"
 	"go-mercury/internal/service/gallery_service"
 )
 
@@ -16,6 +18,7 @@ type App struct {
 	productHandler *product_api.ProductHandler
 	storeHandler   *store_api.StoreHandler
 	linkHandler    *link_api.LinkHandler
+	authHandler    *auth_api.AuthHandler
 }
 
 func NewApp() App {
@@ -36,9 +39,11 @@ func (api *App) Run() error {
 func (api *App) SetupDependencies() error {
 	galleryDB := gallery_db.NewDB("127.0.0.1", 5432, "username", "password", "gallery_db")
 	galleryService := gallery_service.NewService(galleryDB)
+	authService := auth_service.NewService(galleryDB)
 	api.productHandler = product_api.NewProductHandler(&galleryService)
 	api.storeHandler = store_api.NewStoreHandler(&galleryService)
 	api.linkHandler = link_api.NewLinkHandler(&galleryService)
+	api.authHandler = auth_api.NewAuthHandler(&authService)
 
 	return nil
 }
@@ -80,4 +85,8 @@ func (api *App) SetupRouter() {
 	api.engine.DELETE("/links/:id", api.linkHandler.DeleteLink)
 	api.engine.POST("/links", api.linkHandler.CreateLink)
 	api.engine.PATCH("/links", api.linkHandler.UpdateLink)
+
+	api.engine.POST("/auth/register", api.authHandler.Register)
+	api.engine.POST("/auth/login", api.authHandler.Login)
+	api.engine.GET("/auth/user-data", api.authHandler.UserData)
 }
