@@ -51,8 +51,12 @@ func (d *DB) GetUserTab(username string) (*User, error) {
 }
 
 func convertRoleFromDB(roles string) []UserRole {
+	result := make([]UserRole, 0)
+	if roles == "" {
+		return result
+	}
+
 	roleList := strings.Split(roles, ",")
-	var result []UserRole
 	for _, role := range roleList {
 		result = append(result, UserRole(role))
 	}

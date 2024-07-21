@@ -66,9 +66,34 @@ func (h *AuthHandler) Login(c *gin.Context) {
 	general.CreateSuccessResponse(c, nil)
 }
 
+func (h *AuthHandler) UserData(c *gin.Context) {
+	tokenCookie, err := c.Cookie(CookieKeyJWT)
+	if err != nil {
+		general.CreateFailResponse(c, http.StatusUnauthorized, err)
+		return
+	}
+
+	claim, err := h.authService.CheckJWT(tokenCookie)
+	if err != nil {
+		general.CreateFailResponse(c, http.StatusUnauthorized, err)
+		return
+	}
+
+	userTab, err := h.authService.GetUser(claim.Username)
+	if err != nil {
+		log.WithError(err).Error("h.authService.GetUser(claim.Username)")
+		general.CreateFailResponse(c, http.StatusInternalServerError, err)
+		return
+	}
+
+	userData := UserData{Username: userTab.Username}
+	userData.SetRoles(userTab.Roles)
+	general.CreateSuccessResponse(c, userData)
+}
+
 func setResponseJWT(c *gin.Context, jwtString string) {
 	c.SetCookie(
-		"token",
+		CookieKeyJWT,
 		jwtString,
 		int(24*time.Hour.Seconds()),
 		"/",

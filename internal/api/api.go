@@ -88,4 +88,5 @@ func (api *App) SetupRouter() {
 
 	api.engine.POST("/auth/register", api.authHandler.Register)
 	api.engine.POST("/auth/login", api.authHandler.Login)
+	api.engine.GET("/auth/user-data", api.authHandler.UserData)
 }

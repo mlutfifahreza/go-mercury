@@ -78,14 +78,21 @@ func (s Service) CheckJWT(jwtString string) (*JWTClaims, error) {
 	}
 
 	return claims, nil
+}
 
+func (s Service) GetUser(username string) (*gallery_db.User, error) {
+	userTab, err := s.db.GetUserTab(username)
+	if err != nil {
+		return nil, err
+	}
+
+	return userTab, nil
 }
 
 func (s Service) generateJWT(username string, roles []gallery_db.UserRole) (string, error) {
 	expirationTime := time.Now().Add(24 * time.Hour)
 	claims := &JWTClaims{
 		Username: username,
-		Roles:    roles,
 		StandardClaims: jwt.StandardClaims{
 			ExpiresAt: expirationTime.Unix(),
 		},
