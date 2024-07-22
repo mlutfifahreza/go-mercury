@@ -3,7 +3,6 @@ package auth_api
 import (
 	"errors"
 	"net/http"
-	"time"
 
 	"github.com/gin-gonic/gin"
 	log "github.com/sirupsen/logrus"
@@ -92,13 +91,15 @@ func (h *AuthHandler) UserData(c *gin.Context) {
 }
 
 func setResponseJWT(c *gin.Context, jwtString string) {
-	c.SetCookie(
-		CookieKeyJWT,
-		jwtString,
-		int(24*time.Hour.Seconds()),
-		"/",
-		"localhost", // domain
-		false,       // secure
-		true,        // httpOnly
-	)
+	cookie := http.Cookie{
+		Name:     "jwt",
+		Value:    jwtString,
+		Path:     "/",
+		MaxAge:   86400, // 1 day
+		Secure:   true,
+		HttpOnly: false,
+		SameSite: http.SameSiteNoneMode,
+	}
+
+	http.SetCookie(c.Writer, &cookie)
 }

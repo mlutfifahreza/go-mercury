@@ -1,6 +1,9 @@
 package api
 
 import (
+	"time"
+
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	log "github.com/sirupsen/logrus"
 
@@ -67,7 +70,14 @@ func (api *App) SetupRouter() {
 	api.engine.GET("/ping", Ping)
 	api.engine.GET("/healthcheck", HealthCheck)
 
-	api.engine.Use(CORSMiddleware())
+	api.engine.Use(cors.New(cors.Config{
+		AllowOrigins:     []string{"http://127.0.0.1:3000"},
+		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
+		AllowHeaders:     []string{"Origin", "Content-Type", "Accept", "Authorization"},
+		ExposeHeaders:    []string{"Content-Length"},
+		AllowCredentials: true,
+		MaxAge:           12 * time.Hour,
+	}))
 
 	api.engine.GET("/products", api.productHandler.GetProductList)
 	api.engine.POST("/products", api.productHandler.CreateProduct)
